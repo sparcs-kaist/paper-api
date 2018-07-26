@@ -38,9 +38,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'apply.wsgi.application'
+WSGI_APPLICATION = 'paper.wsgi.application'
 
-ROOT_URLCONF = 'apply.urls'
+ROOT_URLCONF = 'paper.urls'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
