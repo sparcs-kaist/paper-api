@@ -1,7 +1,8 @@
 from django.db import models
 from apps.users.models import PaperUser
 from apps.common.models import TimeStampedModel, HavingAuthorModel
-
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 class Paper(TimeStampedModel, HavingAuthorModel):
     title = models.CharField(max_length=50, default="Title")
@@ -9,6 +10,12 @@ class Paper(TimeStampedModel, HavingAuthorModel):
     deadline = models.DateTimeField(editable=True, default=None)
     is_deleted = models.BooleanField(default=False)
     is_validated = models.BooleanField(default=False)
+    preview_image = models.FileField(upload_to='previews/')
+    preview_image_thumbnail = ImageSpecField(source='image',
+                                     processors=[ResizeToFill(380, 250)],
+                                     format='JPEG',
+                                     options={'quality': 60},
+                                     )
 
 
 class Question(models.Model):

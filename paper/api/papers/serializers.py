@@ -12,6 +12,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = "__all__"
 
+
 class QuestionSerializer(serializers.ModelSerializer):
     Choices = ChoiceSerializer(many=True)
 
@@ -27,10 +28,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         choices_data = validated_data.pop('choices', None)
-        question  = Question.objects.create(**validated_data)
+        question = Question.objects.create(**validated_data)
         if choices_data:
             for choice_data in choices_data:
                 Choice.objects.create(question=question, **choices_data)
         return question
+
+
 
 
