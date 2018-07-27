@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.shortcuts import get_object_or_404
 
-class ApplyUserManager(BaseUserManager):
+class PaperUserManager(BaseUserManager):
 
     def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
         user = self.model(email=email,
@@ -27,10 +27,10 @@ class ApplyUserManager(BaseUserManager):
 # Django expects your custom user model to meet some minimum requirements. usernamefiled 정의해야함.
 # 이메일 인증을 하려면 abstractbaseuser여야함.
 # permission mixin은 permission 관련 method를 자동으로 추가해줌.
-class ApplyUser(AbstractBaseUser, PermissionsMixin):
+class PaperUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    objects = ApplyUserManager()
+    objects = PaperUserManager()
     email = models.EmailField(blank=True, unique=True)
     nickName = models.CharField(max_length=20, blank=True, unique=True)
     is_active = models.BooleanField(default=False)
