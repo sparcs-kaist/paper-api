@@ -18,7 +18,7 @@ class PaperUserManager(BaseUserManager):
         return self.get(email=email_)
 
     def create_user(self, email, password=None):
-        return self._create_user(email, password, False, False, is_active=False)
+        return self._create_user(email, password, False, False, is_active=True)
 
     def create_superuser(self, email, password):
         return self._create_user(email, password, True, True, is_active=True)

@@ -9,9 +9,10 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import RetrieveAPIView
 from api.users.serializers import PaperuserSerializer
 from apps.papers.models import PaperUser
+from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
 
 class UserViewSet(viewsets.ModelViewSet):
 
     serializer_class = PaperuserSerializer
     queryset = PaperUser.objects.all()
-    filter_fields = ("nickName")
+    filter_fields = ("nickName",)

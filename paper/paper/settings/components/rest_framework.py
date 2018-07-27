@@ -30,3 +30,13 @@ REST_FRAMEWORK = {
     ),
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M'
 }
+
+
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'PAPER',
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=365),
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'paper.common.utils.jwt_response_payload_handler'
+}
+
