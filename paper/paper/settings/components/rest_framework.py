@@ -18,7 +18,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
 
     ),
-    'DEFAULT_PAGINATION_CLASS': 'zabo.common.paginator.StandardPagination',
+    'DEFAULT_PAGINATION_CLASS': 'paper.common.paginator.StandardPagination',
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),

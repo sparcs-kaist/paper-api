@@ -9,7 +9,7 @@ class Participate(TimeStampedModel, HavingAuthorModel):
     paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
 
 
-class Answer(models.model):
+class Answer(models.Model):
     participate = models.ForeignKey(Participate, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     select = models.ForeignKey(Choice, on_delete=models.SET_NULL, blank=True, null=True, default=None) # blank= true , null = true면 optional이다.

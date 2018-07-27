@@ -12,9 +12,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.users',
     'apps.papers',
-    'apps.answers'
+    'apps.answers',
     'rest_framework_swagger',
-    'coreheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [

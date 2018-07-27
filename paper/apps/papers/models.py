@@ -7,7 +7,7 @@ class Paper(TimeStampedModel, HavingAuthorModel):
     title = models.CharField(max_length=50, default="Title")
     content = models.TextField(blank=True, null=True)
     deadline = models.DateTimeField(editable=True, default=None)
-    is_deleted = models.BooleanField(deafault=False)
+    is_deleted = models.BooleanField(default=False)
     is_validated = models.BooleanField(default=False)
 
 
@@ -28,7 +28,7 @@ class Question(models.Model):
         order_with_respect_to = 'paper'
 
 
-class Choice(models.model):
+class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.CharField(max_length=50, default="option")
 
