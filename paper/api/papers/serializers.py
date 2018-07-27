@@ -31,7 +31,7 @@ class PaperSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True)
 
     class Meta:
-        model = Question
+        model = Paper
         fields = (
             'title',
             'content',
@@ -51,3 +51,25 @@ class PaperSerializer(serializers.ModelSerializer):
                     for choice_data in choices_data:
                         Choice.objects.create(question=question, **choices_data)
         return paper
+
+class PaperListSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True)
+    author = PaperuserSerializer(read_only=True)
+
+    class Meta:
+        model = Paper
+        fields = (
+            'title',
+            'content',
+            'deadline',
+            'preview_image',
+            'previes_image_thumbnail',
+            'questions',
+            'author',
+        )
+        read_only_fields = (
+            'created_time',
+            'updated_time',
+        )
+
+
