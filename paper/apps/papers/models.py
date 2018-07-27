@@ -10,8 +10,8 @@ class Paper(TimeStampedModel, HavingAuthorModel):
     deadline = models.DateTimeField(editable=True, default=None)
     is_deleted = models.BooleanField(default=False)
     is_validated = models.BooleanField(default=False)
-    preview_image = models.FileField(upload_to='previews/')
-    preview_image_thumbnail = ImageSpecField(source='image',
+    preview_image = models.FileField(upload_to='previews/', default=None)
+    preview_image_thumbnail = ImageSpecField(source='preview_image',
                                      processors=[ResizeToFill(380, 250)],
                                      format='JPEG',
                                      options={'quality': 60},

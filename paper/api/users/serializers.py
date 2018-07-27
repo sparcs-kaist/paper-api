@@ -16,7 +16,6 @@ class PaperuserListSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'email',
-            'url',
             'nickName',
             'profile_image',
         )
