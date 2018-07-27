@@ -14,7 +14,7 @@ class ChoiceSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    Choices = ChoiceSerializer(many=True)
+    Choices = ChoiceSerializer(many=True, read_only=True)
 
     class Meta:
         model = Question
@@ -26,14 +26,28 @@ class QuestionSerializer(serializers.ModelSerializer):
             'choices'
         )
 
+
+class PaperSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True)
+
+    class Meta:
+        model = Question
+        fields = (
+            'title',
+            'content',
+            'deadline',
+            'preview_image',
+            'questions'
+        )
+
     def create(self, validated_data):
-        choices_data = validated_data.pop('choices', None)
-        question = Question.objects.create(**validated_data)
-        if choices_data:
-            for choice_data in choices_data:
-                Choice.objects.create(question=question, **choices_data)
-        return question
-
-
-
-
+        questions_data = validated_data.pop('questions', None)
+        paper = Paper.objects.create(**validated_data)
+        if questions_data:
+            for question_data in questions_data:
+                choices_data = question_data.pop('choices', None)
+                question = Question.objects.create(**question_data)
+                if choices_data:
+                    for choice_data in choices_data:
+                        Choice.objects.create(question=question, **choices_data)
+        return paper
