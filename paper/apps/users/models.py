@@ -1,7 +1,7 @@
 from django.db import models
-
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.shortcuts import get_object_or_404
+
 
 class PaperUserManager(BaseUserManager):
 
@@ -39,4 +39,3 @@ class PaperUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     joined_date = models.DateField(auto_now_add=True)
     profile_image = models.FileField(upload_to='users/profile/')
-
