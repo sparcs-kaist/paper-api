@@ -24,7 +24,7 @@ class Question(models.Model):
         ('R', 'Radio'),
         ('O', 'Open-Ended')
     )
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, related_name="questions")
     content = models.CharField(max_length=140, default="empty question")
     type = models.CharField(
         max_length=1, choices=QUESTION_TYPE
@@ -36,7 +36,7 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
     option = models.CharField(max_length=50, default="option")
 
     class Meta:

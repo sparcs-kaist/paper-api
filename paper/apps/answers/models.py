@@ -10,13 +10,13 @@ class Participate(TimeStampedModel, HavingAuthorModel):
 
 
 class Answer(models.Model):
-    participate = models.ForeignKey(Participate, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    participate = models.ForeignKey(Participate, on_delete=models.CASCADE, related_name="answers")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
     content = models.TextField(blank=True, null=True, default=None) # blank= true , null = true면 optional이다.
 
     class Meta:
         order_with_respect_to = 'participate'
 
 class Select(models.Model):
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, related_name="selects")
     choice = models.ForeignKey(Choice, on_delete=models.SET_NULL, blank=True, null=True, default=None) # blank= true , null = true면 optional이다.

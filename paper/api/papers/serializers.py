@@ -61,10 +61,11 @@ class PaperCreateSerializer(serializers.ModelSerializer):
                         Choice.objects.create(question=question, **choice_data)
         return paper
 
+
 class PaperSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True, read_only=True)
     author = PaperuserListSerializer(read_only=True)
     preview_image_thumbnail = serializers.ImageField(read_only=True)
+    questions = QuestionSerializer(read_only=True, many=True)
 
     class Meta:
         model = Paper

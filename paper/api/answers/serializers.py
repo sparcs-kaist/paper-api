@@ -1,22 +1,33 @@
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from api.users.serializers import PaperuserSerializer, PaperuserListSerializer
+from api.users.serializers import PaperuserListSerializer
 from api.papers.serializers import PaperListSerializer, ChoiceSerializer, QuestionSerializer
-from apps.papers.models import Paper, Question, Choice
+from apps.papers.models import Question, Choice
 from apps.answers.models import Participate, Answer, Select
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 import json
 
 
-class AnswerSerializer(serializers.ModelSerializer):
-    question = QuestionSerializer(read_only=True)
+class SelectSerializer(serializers.ModelSerializer):
     choice = ChoiceSerializer(read_only=True)
+
+    class Meta:
+        model = Select
+        fields = (
+            'choice',
+        )
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    question = serializers.SlugRelatedField(read_only=True, slug_field='content')
+    selects = SelectSerializer(read_only=True, many=True)
 
     class Meta:
         model = Answer
         fields = (
+            'id',
             'question',
-            'select'
+            'selects',
             'content'
         )
 
@@ -48,7 +59,7 @@ class ParticipateCreateSerializer(serializers.ModelSerializer):
                         if answer_data["selects"] is None:
                             raise AssertionError()
                         selects_data = answer_data.pop('selects')
-                        if question.is_multiple == False and len(selects_data) > 1:
+                        if question.is_multiple is False and len(selects_data) > 1:
                             raise AssertionError()
                         answer = Answer.objects.create(participate=participate, question=question, **answer_data)
                         for select_data in selects_data:
@@ -63,6 +74,7 @@ class ParticipateCreateSerializer(serializers.ModelSerializer):
                         Answer.objects.create(participate=participate, question=question, **answer_data)
         except ObjectDoesNotExist or AssertionError:
             participate.delete()
+            return HttpResponse(status=400)
         return participate
 
 
@@ -76,17 +88,16 @@ class ParticipateSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'paper',
-            'answers',
             'author',
+            'answers'
         )
         read_only_fields = (
             'created_time',
             'updated_time',
         )
 
-
 class ParticipateListSerializer(serializers.ModelSerializer):
-    paper = PaperListSerializer(many=True, read_only=True)
+    paper = PaperListSerializer(read_only=True)
 
     class Meta:
         model = Participate

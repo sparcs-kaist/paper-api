@@ -25,7 +25,6 @@ class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
     serializer_class = ParticipateSerializer
     queryset = Participate.objects.all()
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    search_fields = ('title', 'content',)
     # 나중에 검색 결과 순서에 대해 이야기 해보아야 함
     ordering_fields = ('created_time',)
 
@@ -35,6 +34,21 @@ class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         'retrieve': ParticipateSerializer,
         "update": ParticipateCreateSerializer
     }
+    permission_classes = (IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user
+        )
+
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    """
+        This viewset automatically provides `list`, `create`, `retrieve`,
+        `update` and `destroy` actions.
+    """
+    serializer_class = AnswerSerializer
+    queryset = Answer.objects.all()
     permission_classes = (IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly,)
 
     def perform_create(self, serializer):
