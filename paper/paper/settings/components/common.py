@@ -13,6 +13,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.papers',
     'apps.answers',
+    'apps.mails',
     'rest_framework_swagger',
      'corsheaders',
 ]
