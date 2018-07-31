@@ -1,7 +1,6 @@
 from django.db import models
 from apps.common.models import TimeStampedModel
 from apps.users.models import PaperUser
-import json
 
 class PaperMail(TimeStampedModel):
     sender_address =  models.CharField(blank=False, null=False, max_length=50 , default="")
@@ -10,7 +9,7 @@ class PaperMail(TimeStampedModel):
     message = models.TextField(blank=True, null=True)
 
     def set_receivers_address(self, mail_list):
-        self.receivers_address = json.dump(mail_list)
+        self.receivers_address = ':'.join(mail_list)
 
     def get_receivers_addresss(self):
-        return json.loads(self.receivers_address)
+        return self.receivers_address.split(':')
