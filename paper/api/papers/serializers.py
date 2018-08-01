@@ -18,10 +18,19 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = (
             'paper',
-            'type',
             'content',
             'type',
             'choices',
+            'is_multiple'
+        )
+
+
+class BriefQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = (
+            'type',
+            'content',
             'is_multiple'
         )
 

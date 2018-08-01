@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from api.users.serializers import PaperuserListSerializer
-from api.papers.serializers import PaperListSerializer, ChoiceSerializer
+from api.papers.serializers import PaperListSerializer, BriefQuestionSerializer,ChoiceSerializer
 from apps.papers.models import Question, Choice
 from apps.answers.models import Participate, Answer, Select
 from django.core.exceptions import ObjectDoesNotExist
@@ -19,7 +19,7 @@ class SelectSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    question = serializers.SlugRelatedField(read_only=True, slug_field='content')
+    question = BriefQuestionSerializer(read_only=True, many=False)
     selects = SelectSerializer(read_only=True, many=True)
 
     class Meta:
