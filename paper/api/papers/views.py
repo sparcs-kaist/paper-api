@@ -41,3 +41,16 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
             author=self.request.user
         )
 
+    @action(methods=['get'], detail=False)
+    def created(self, request):
+        if request.user.is_anonymous:
+            return Response({'Message': 'You are unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+        user = request.user
+        queryset = Paper.objects.filter(author=user).order_by('updated_time')
+        page = self.paginate_queryset(queryset)
+        serializer = PaperListSerializer(page, many=True, context={
+            'request': request,
+        })
+        if page is not None:
+            return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
