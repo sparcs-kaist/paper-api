@@ -16,3 +16,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = PaperuserSerializer
     queryset = PaperUser.objects.all()
     filter_fields = ("nickName",)
+
+    @action(methods=['get'], detail=False)
+    def myInfo(self, request):
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
