@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from apps.papers.models import Paper, Question, Choice
 from api.papers.serializers import PaperSerializer, PaperListSerializer, PaperCreateSerializer
+from .admin_serializers import PaperAdminSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
@@ -13,7 +14,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from api.common.viewset import ActionAPIViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
-from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
+from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly, PaperPermission
 
 
 class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
@@ -32,9 +33,10 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         'create': PaperCreateSerializer,
         'list': PaperListSerializer,
         'retrieve': PaperSerializer,
-        "update": PaperCreateSerializer
+        "update": PaperCreateSerializer,
+        "admin": PaperAdminSerializer,
     }
-    permission_classes = (IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly,)
+    permission_classes = (PaperPermission, )
 
     def perform_create(self, serializer):
         serializer.save(
@@ -53,4 +55,10 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         })
         if page is not None:
             return self.get_paginated_response(serializer.data)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def admin(self, request, pk=None):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)

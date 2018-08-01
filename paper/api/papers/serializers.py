@@ -1,9 +1,7 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
-
 from api.users.serializers import PaperuserSerializer, PaperuserListSerializer
 from apps.papers.models import Paper, Question, Choice
-from django.conf import settings
+# from api.answers.serializers import ParticipateSerializer
 import json
 
 

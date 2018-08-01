@@ -45,3 +45,26 @@ class IsAuthenticated(permissions.IsAuthenticated):
         if request.method == 'OPTIONS':
             return True
         return super(IsAuthenticated, self).has_permission(request, view)
+
+class PaperPermission(permissions.BasePermission):
+    message = "It's not permissioned"
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        UPDATE_METHODS = ('PUT', 'PATCH')
+
+        if view.action == 'admin':
+            return request.user and request.user.is_authenticated and request.user == obj.author
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        elif eq(request.method, 'POST') or eq(request.method, 'DELETE'):
+            return request.user and request.user.is_authenticated
+        elif request.method in UPDATE_METHODS:
+            return obj.author == request.user
+
+        # Other method does not permissioned.
+        return False
+
+

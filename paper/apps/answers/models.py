@@ -6,7 +6,7 @@ from apps.common.models import TimeStampedModel, HavingAuthorModel
 # Create your models here.
 
 class Participate(TimeStampedModel, HavingAuthorModel):
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, related_name='participates')
 
 
 class Answer(models.Model):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from api.users.serializers import PaperuserListSerializer
-from api.papers.serializers import PaperListSerializer, ChoiceSerializer, QuestionSerializer
+from api.papers.serializers import PaperListSerializer, ChoiceSerializer
 from apps.papers.models import Question, Choice
 from apps.answers.models import Participate, Answer, Select
 from django.core.exceptions import ObjectDoesNotExist
@@ -96,6 +96,7 @@ class ParticipateSerializer(serializers.ModelSerializer):
             'updated_time',
         )
 
+
 class ParticipateListSerializer(serializers.ModelSerializer):
     paper = PaperListSerializer(read_only=True)
 
@@ -104,6 +105,22 @@ class ParticipateListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'paper'
+        )
+        read_only_fields = (
+            'created_time',
+            'updated_time',
+        )
+
+class CheckingParticipateSerializer(serializers.ModelSerializer):
+    answers = AnswerSerializer(many=True, read_only=True)
+    author = PaperuserListSerializer(read_only=True)
+
+    class Meta:
+        model = Participate
+        fields = (
+            'id',
+            'author',
+            'answers'
         )
         read_only_fields = (
             'created_time',

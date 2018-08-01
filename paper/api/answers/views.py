@@ -15,7 +15,7 @@ from api.common.viewset import ActionAPIViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
-
+from apps.papers.models import Paper
 
 class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
     """
@@ -54,6 +54,7 @@ class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         if page is not None:
             return self.get_paginated_response(serializer.data)
         return Response(serializer.data)
+
 
 class AnswerViewSet(viewsets.ModelViewSet):
     """
