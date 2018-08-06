@@ -26,12 +26,15 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class BriefQuestionSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True, read_only=True)
+
     class Meta:
         model = Question
         fields = (
             'type',
             'content',
-            'is_multiple'
+            'is_multiple',
+            'choices'
         )
 
 
