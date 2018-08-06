@@ -34,6 +34,7 @@ class BriefQuestionSerializer(serializers.ModelSerializer):
             'type',
             'content',
             'is_multiple',
+            'deadline',
             'choices'
         )
 
@@ -103,6 +104,7 @@ class PaperListSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'deadline',
             'preview_image_thumbnail',
         )
         read_only_fields = (
