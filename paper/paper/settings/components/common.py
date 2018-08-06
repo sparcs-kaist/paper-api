@@ -13,8 +13,9 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.papers',
     'apps.answers',
+    'apps.mails',
     'rest_framework_swagger',
-    'corsheaders',
+     'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +68,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 INTERNAL_IPS = ('127.0.0.1', )
 
 ALLOWD_HOSTS = ['*']
