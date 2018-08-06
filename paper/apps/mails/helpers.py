@@ -1,16 +1,16 @@
-from django.core import mail
+from django.core.mail import send_mail
 from .models import PaperMail
 
 class MailHelpers():
 
-    def __init__(self, sender, receivers):
-        self.sender = sender
-        self.receivers = self.receivers
+    def __init__(self, paperMail):
+        self.paperMail = paperMail
 
-    def saveMail(self, subject, content):
-        instance = PaperMail(sender_address=self.sender.email, subject=subject, content=content)
-        receiver_address_list = []
-        for receiver in self.receivers:
-            receiver_address_list.append(receiver.email)
-        instance.set_receivers_address(receiver_address_list)
-        instance.save()
+    def sendMail(self):
+        send_mail(
+            self.paperMail.subject,
+            self.paperMail.message,
+            self.paperMail.sender_address,
+            self.paperMail.get_receivers_addresss(),
+            fail_silently=False,
+        )
