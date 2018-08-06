@@ -1,5 +1,7 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from operator import eq
+from apps.papers.models import Paper
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -67,4 +69,16 @@ class PaperPermission(permissions.BasePermission):
         # Other method does not permissioned.
         return False
 
+class ParticipatePermission(IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly):
+    def has_permission(self, request, view):
+        MODIFYING_METHODS = ('PUT', 'PATCH', "POST")
 
+        if  request.method in MODIFYING_METHODS:
+            if request.data.get("paper") == False:
+                return False
+            paper_id = request.data.get("paper")
+            target_paper = get_object_or_404(Paper, pk=paper_id)
+            if target_paper.is_finished:
+                return False
+
+        return True

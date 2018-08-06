@@ -3,6 +3,7 @@ from apps.users.models import PaperUser
 from apps.common.models import TimeStampedModel, HavingAuthorModel
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from django.utils import timezone
 
 class Paper(TimeStampedModel, HavingAuthorModel):
     title = models.CharField(max_length=50, default="Title")
@@ -16,6 +17,15 @@ class Paper(TimeStampedModel, HavingAuthorModel):
                                      format='JPEG',
                                      options={'quality': 60},
                                      )
+
+    @property
+    def is_finished(self):
+        current = timezone.now()
+        diff = self.deadline - current
+        if str(diff)[0] == '-':
+            return True
+        else:
+            return False
 
 
 class Question(models.Model):

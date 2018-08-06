@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from api.common.viewset import ActionAPIViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
-from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
+from paper.common.permissions import ParticipatePermission
 from apps.papers.models import Paper
 
 class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
@@ -34,9 +34,10 @@ class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         'retrieve': ParticipateSerializer,
         "update": ParticipateCreateSerializer
     }
-    permission_classes = (IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly,)
+    permission_classes = (ParticipatePermission, )
 
     def perform_create(self, serializer):
+
         serializer.save(
             author=self.request.user
         )
