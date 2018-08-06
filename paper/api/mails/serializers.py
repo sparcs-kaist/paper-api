@@ -5,7 +5,6 @@ from apps.mails.models import PaperMail
 import json
 
 
-
 class PaperMailCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperMail
@@ -15,6 +14,6 @@ class PaperMailCreateSerializer(serializers.ModelSerializer):
         instance = super(PaperMailCreateSerializer, self).to_internal_value(data)
         if "receivers_address" in data:
             receivers_data = data["receivers_address"]
-            instance["receivers_address"] = ':'.join(receivers_data)
+            receivers_list = receivers_data.split(",")
+            instance["receivers_address"] = ':'.join(receivers_list)
         return instance
-

@@ -22,7 +22,5 @@ class PaperMailViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
     permission_classes = (IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly,)
 
     def perform_create(self, serializer):
-        paperMail = serializer.save(
-            author=self.request.user
-        )
+        paperMail = serializer.save()
         MailHelpers(paperMail).sendMail()
