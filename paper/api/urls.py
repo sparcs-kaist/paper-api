@@ -11,6 +11,7 @@ urlpatterns = (
     url(r'^api/', include(paperuser_router.urls)),
     url(r'^api/', include(paper_router.urls)),
     url(r'^api/', include(participate_router.urls)),
+
     url(r'^swagger/$', swagger_view),
 
 )
