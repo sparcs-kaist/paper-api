@@ -34,7 +34,6 @@ class BriefQuestionSerializer(serializers.ModelSerializer):
             'type',
             'content',
             'is_multiple',
-            'deadline',
             'choices'
         )
 
