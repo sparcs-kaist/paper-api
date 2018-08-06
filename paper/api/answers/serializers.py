@@ -5,6 +5,7 @@ from apps.papers.models import Question, Choice
 from apps.answers.models import Participate, Answer, Select
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.db import transaction
 import json
 
 
@@ -51,32 +52,71 @@ class ParticipateCreateSerializer(serializers.ModelSerializer):
         answers_data = validated_data.pop('answers', None)
         try:
             participate = Participate.objects.create(**validated_data)
-            if answers_data:
-                questions = Question.objects.filter(paper=participate.paper)
-                for answer_data, question in zip(answers_data, questions):
-                    if question.type == 'C' or question.type == 'R':
-                        choice_id_list = Choice.objects.filter(question=question).values_list('id', flat=True)
-                        if answer_data["selects"] is None:
+            if answers_data is None:
+                raise AssertionError
+            questions = Question.objects.filter(paper=participate.paper)
+            for answer_data, question in zip(answers_data, questions):
+                if question.type == 'C' or question.type == 'R':
+                    choice_id_list = Choice.objects.filter(question=question).values_list('id', flat=True)
+                    if answer_data["selects"] is None:
+                        raise AssertionError()
+                    selects_data = answer_data.pop('selects')
+                    if question.is_multiple is False and len(selects_data) > 1:
+                        raise AssertionError()
+                    answer = Answer.objects.create(participate=participate, question=question, **answer_data)
+                    for select_data in selects_data:
+                        select_choice_id = select_data["choice"]
+                        if select_choice_id not in choice_id_list:
                             raise AssertionError()
-                        selects_data = answer_data.pop('selects')
-                        if question.is_multiple is False and len(selects_data) > 1:
-                            raise AssertionError()
-                        answer = Answer.objects.create(participate=participate, question=question, **answer_data)
-                        for select_data in selects_data:
-                            select_choice_id = select_data["choice"]
-                            if select_choice_id not in choice_id_list:
-                                raise AssertionError()
-                            choice = Choice.objects.get(id=select_data["choice"])
-                            Select.objects.create(answer=answer, choice=choice)
-                    elif question.type == 'O':
-                        if answer_data["content"] is None:
-                            raise AssertionError()
-                        Answer.objects.create(participate=participate, question=question, **answer_data)
+                        choice = Choice.objects.get(id=select_data["choice"])
+                        Select.objects.create(answer=answer, choice=choice)
+                elif question.type == 'O':
+                    if answer_data["content"] is None:
+                        raise AssertionError()
+                    Answer.objects.create(participate=participate, question=question, **answer_data)
+                else: #unintended type
+                    raise AssertionError
         except ObjectDoesNotExist or AssertionError:
             participate.delete()
             return HttpResponse(status=400)
         return participate
 
+    def update(self, instance, validated_data):
+        with transaction.atomic():
+            try:
+                answers_data = validated_data.pop('answers', None)
+                order_list = instance.get_answer_order()
+                first_order = order_list[0]
+                target_answer = Answer.objects.get(id=first_order)
+                questions = Question.objects.filter(paper=instance.paper)
+                answers = instance.answers.all()
+                for answer_data, question, target_answer in zip(answers_data, questions, answers):
+                    if question.type == 'C' or question.type == 'R':
+                        if answer_data["selects"] is None:
+                            raise AssertionError()
+                        selects_data = answer_data.pop("selects")
+                        if question.is_multiple is False and len(selects_data) > 1:
+                            raise AssertionError()
+                        choice_id_list = Choice.objects.filter(question=question).values_list('id', flat=True)
+                        target_answer.selects.all().delete()
+                        for select_data in selects_data:
+                            select_choice_id = select_data["choice"]
+                            if select_choice_id not in choice_id_list:
+                                raise AssertionError()
+                            choice = Choice.objects.get(id=select_choice_id)
+                            Select.objects.create(answer=target_answer, choice=choice)
+                    elif question.type == 'O':
+                        if answer_data["content"] is None:
+                            raise AssertionError()
+                            content = answer_data["content"]
+                        target_answer.content = answer_data["content"]
+                    else:
+                        raise AssertionError()
+                    target_answer.save()
+
+            except AssertionError:
+                return HttpResponse(status=400) #인식을 못함
+        return instance
 
 class ParticipateSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True, read_only=True)

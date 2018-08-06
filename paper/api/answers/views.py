@@ -41,6 +41,11 @@ class ParticipateViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
             author=self.request.user
         )
 
+    def perform_update(self, serializer):
+        serializer.save(
+            author=self.request.user
+        )
+
     @action(methods=['get'], detail=False)
     def created(self, request):
         if request.user.is_anonymous:
