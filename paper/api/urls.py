@@ -13,6 +13,11 @@ urlpatterns = (
     url(r'^api/', include(paper_router.urls)),
     url(r'^api/', include(participate_router.urls)),
     url(r'^api/', include(mail_router.urls)),
-    url(r'^swagger/$', swagger_view),
 
+    url(r'^api/login/$', views.login),
+    url(r'^api/login/callback/$', views.login_callback),
+    url(r'^api/logout/$', views.logout),
+    url(r'^api/unregister/$', views.unregister),
+
+    url(r'^swagger/$', swagger_view),
 )
