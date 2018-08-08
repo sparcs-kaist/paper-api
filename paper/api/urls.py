@@ -5,6 +5,7 @@ from api.users.routers import paperuser_router
 from api.papers.routers import paper_router
 from api.answers.routers import participate_router
 from api.mails.routers import mail_router
+from api.users import views
 
 swagger_view = get_swagger_view(title="Pastebian API")
 urlpatterns = (

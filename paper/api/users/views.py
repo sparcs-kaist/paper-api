@@ -10,7 +10,17 @@ from rest_framework.generics import RetrieveAPIView
 from api.users.serializers import PaperuserSerializer
 from apps.papers.models import PaperUser
 from paper.common.permissions import IsOwnerOrIsAuthenticatdThenCreateOnlyOrReadOnly
+from django.views.decorators.http import require_http_methods
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
+from apps.users.models import PaperUser
+from apps.users.sparcssso import Client
+from paper.settings.components.secret import SSO_CLIENT_ID, SSO_SECRET_KEY, SSO_IS_BETA
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 
+
+sso_client = Client(SSO_CLIENT_ID, SSO_SECRET_KEY, SSO_IS_BETA)
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = PaperuserSerializer
@@ -41,11 +51,13 @@ def login(request):
 
     login_url, state = sso_client.get_login_params()
     request.session['sso_state'] = state
+    print("login_url: {login_url}".format(login_url=login_url))
     return redirect(login_url)
 
 
 @require_http_methods(['GET'])
 def login_callback(request):
+    print("login_callback")
     state_before = request.session.get('sso_state', 'default before state')
     state = request.GET.get('state', 'default state')
     if state_before != state:
@@ -55,10 +67,11 @@ def login_callback(request):
     sso_profile = sso_client.get_user_info(code)
     # print(sso_profile)
     email = sso_profile['email']
-    user_list = ZaboUser.objects.filter(email=email)
+    user_list = PaperUser.objects.filter(email=email)
 
     if len(user_list) == 0:
-        user = ZaboUser.objects.create_user(email=email, password=email)
+        print("new user")
+        user = PaperUser.objects.create_user(email=email, password=email)
         user.first_name = sso_profile['first_name']
         user.last_name = sso_profile['last_name']
         user.gender = sso_profile['gender']
@@ -83,17 +96,16 @@ def login_callback(request):
                         data={'error_title': "Login Error",
                               'error_message': "No such that user"})
 
-
-@api_view(['GET'])
+@require_http_methods(['GET'])
 def logout(request):
     print("logout")
     email = request.GET.get('email')
-    sid = ZaboUser.objects.get(email=email).sid
+    sid = PaperUser.objects.get(email=email).sid
     logout_url = sso_client.get_logout_url(sid, url_after_logout)
     return redirect(logout_url)
 
     if request.user.is_authenticated:
-        sid = ZaboUser.objects.get(email=request.GET.get('email')).sid
+        sid = Paper.objects.get(email=request.GET.get('email')).sid
         logout_url = sso_client.get_logout_url(sid, url_after_logout)
         request.session['visited'] = True
         return redirect(logout_url)
@@ -108,7 +120,7 @@ def unregister(request):
         return JsonResponse(status=200,
                             data={'error_title': "Unregister Error",
                                   'error_message': "please try again1"})
-    zabo_user = ZaboUser.objects.get(email=request.user)
+    zabo_user = PaperUser.objects.get(email=request.user)
 
     sid = zabo_user.sid
     result = sso_client.do_unregister(sid)
