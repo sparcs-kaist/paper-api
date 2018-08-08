@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from django.urls import path, re_path
+#from django.urls import path, re_path
 from rest_framework_swagger.views import get_swagger_view
 from api.users.routers import paperuser_router
 from api.papers.routers import paper_router
