@@ -43,3 +43,6 @@ class PaperUser(AbstractBaseUser, PermissionsMixin):
     joined_date = models.DateField(auto_now_add=True)
     profile_image = models.FileField(upload_to='users/profile/')
     sid = models.CharField(max_length=30, default=0)
+
+    def get_short_name(self):
+        return self.email

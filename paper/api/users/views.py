@@ -72,9 +72,9 @@ def login_callback(request):
     if len(user_list) == 0:
         print("new user")
         user = PaperUser.objects.create_user(email=email, password=email)
-        user.first_name = sso_profile['first_name']
-        user.last_name = sso_profile['last_name']
-        user.gender = sso_profile['gender']
+        #user.first_name = sso_profile['first_name']
+        #user.last_name = sso_profile['last_name']
+        #user.gender = sso_profile['gender']
         user.sid = sso_profile['sid']
         # TODO sso유저 닉네임 설정
         user.nickName = email[0:15]
