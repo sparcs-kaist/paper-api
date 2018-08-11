@@ -38,10 +38,20 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
     }
     permission_classes = (PaperPermission, )
 
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        paper = self.perform_create(serializer)
+        response_dict = {'paper': paper.id}
+        response_dict.update(serializer.data)
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_dict, status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
-        serializer.save(
+        paper = serializer.save(
             author=self.request.user
         )
+        return paper
 
 
     @action(methods=['get'], detail=False)
