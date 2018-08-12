@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.shortcuts import get_object_or_404
+from apps.users.sparcssso import Client
+from paper.settings.components.secret import SSO_CLIENT_ID, SSO_SECRET_KEY, SSO_IS_BETA
 
+sso_client = Client(SSO_CLIENT_ID, SSO_SECRET_KEY, is_beta=SSO_IS_BETA)
 
 class PaperUserManager(BaseUserManager):
 
@@ -39,3 +42,7 @@ class PaperUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     joined_date = models.DateField(auto_now_add=True)
     profile_image = models.FileField(upload_to='users/profile/')
+    sid = models.CharField(max_length=30, default=0)
+
+    def get_short_name(self):
+        return self.email
