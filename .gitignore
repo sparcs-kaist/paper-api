@@ -118,6 +118,8 @@ venv.bak/
 ### Python Patch ###
 .venv/
 
+# Pycharm
+.idea/
 
 # security
 database.py
