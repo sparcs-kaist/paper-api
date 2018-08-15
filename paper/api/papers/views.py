@@ -28,6 +28,8 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
     search_fields = ('title', 'content',)
     # 나중에 검색 결과 순서에 대해 이야기 해보아야 함
     ordering_fields = ('created_time',)
+    filter_fields = ('author', )
+
 
     action_serializer_class = {
         'create': PaperCreateSerializer,
@@ -37,6 +39,15 @@ class PaperViewSet(viewsets.ModelViewSet, ActionAPIViewSet):
         "admin": PaperAdminSerializer,
     }
     permission_classes = (PaperPermission, )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)

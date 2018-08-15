@@ -17,6 +17,7 @@ class Paper(TimeStampedModel, HavingAuthorModel):
                                      format='JPEG',
                                      options={'quality': 60},
                                      )
+    poster_url = models.URLField(null=True)
 
     @property
     def is_finished(self):

@@ -84,6 +84,7 @@ class PaperSerializer(serializers.ModelSerializer):
             'title',
             'content',
             'deadline',
+            'poster_url',
             'preview_image',
             'preview_image_thumbnail',
             'questions',
@@ -104,6 +105,7 @@ class PaperListSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'deadline',
+            'poster_url',
             'preview_image_thumbnail',
         )
         read_only_fields = (
