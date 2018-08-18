@@ -48,6 +48,7 @@ class PaperCreateSerializer(serializers.ModelSerializer):
             'content',
             'deadline',
             'preview_image',
+            'poster_url',
             # 'questions',
         )
 
