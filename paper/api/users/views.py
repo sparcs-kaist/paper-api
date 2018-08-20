@@ -18,7 +18,8 @@ from apps.users.sparcssso import Client
 from paper.settings.components.secret import SSO_CLIENT_ID, SSO_SECRET_KEY, SSO_IS_BETA
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
-
+from rest_framework_jwt.settings import api_settings
+from paper.settings.components.common import base_url
 
 sso_client = Client(SSO_CLIENT_ID, SSO_SECRET_KEY, SSO_IS_BETA)
 
@@ -34,8 +35,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# front end base url
-base_url = "http://ssal.sparcs.org:16140"
 # url after login
 url_after_login = base_url + "/login/"
 # url when get error
@@ -78,16 +77,23 @@ def login_callback(request):
         print("user's sid: {sid}".format(sid=user.sid))
         user.save()
 
-        return redirect(url_after_login + email)
+
     else:
         print("user exists")
         user = user_list[0]
+        user.nickName = email.split('@')[0]
         user.first_name = sso_profile['first_name']
         user.last_name = sso_profile['last_name']
         user.sid = sso_profile['sid']
         user.save()
 
-        return redirect(url_after_login + email)
+    next_path = '{0}/{1}'.format(base_url, api_settings.JWT_ENCODE_HANDLER(
+        api_settings.JWT_PAYLOAD_HANDLER(
+            user,
+        )
+    ))
+
+    return redirect(next_path)
 
     return JsonResponse(status=200,
                         data={'error_title': "Login Error",
