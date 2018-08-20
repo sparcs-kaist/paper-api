@@ -87,7 +87,7 @@ def login_callback(request):
         user.sid = sso_profile['sid']
         user.save()
 
-    next_path = '{0}/{1}'.format(url_after_login, api_settings.JWT_ENCODE_HANDLER(
+    next_path = '{0}{1}'.format(url_after_login, api_settings.JWT_ENCODE_HANDLER(
         api_settings.JWT_PAYLOAD_HANDLER(
             user,
         )
